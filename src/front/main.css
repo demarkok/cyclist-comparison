@@ -1,0 +1,64 @@
+/*
+div {
+	background-color: red;
+}
+*/
+
+.footer {
+	background-color: black;
+	color: white
+}
+/*
+.foo {
+	background-color: #126987;
+}
+*/
+
+
+
+.clearfix {
+	clear: both;
+}
+.logo {
+	font-size: 80pt;
+	float: left;
+}
+
+.header {
+	background-color: black;
+}
+
+
+.menu {
+	text-align: center;
+}
+
+
+.menu_button {
+	font-family: "Inconsolata", "Consolas";
+	font-size: 30pt;
+	display: block;
+	margin: 15pt;
+	padding: 0pt;
+	background-color: Transparent;
+	background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+}
+
+.textfield input {
+
+	border-radius: 8px;
+}
+
+.footer {
+	max-width: 200px;
+	margin: 0 auto;
+	text-align: center;
+}
+.footer a {
+	color: white;
+}
+
+

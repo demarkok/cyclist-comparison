@@ -1,42 +1,70 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE IncoherentInstances #-}
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ExtendedDefaultRules #-}
 
-module QueryProcessor where
+module QueryProcessor (getCommonCompetitionsRows, getUsersList) where
 
 import Data.Aeson
 import GHC.Generics
+import Data.Time
+import Database.PostgreSQL.Simple
+
+import GShow
+
 
 data UsersList = UsersList [User] deriving Generic 
 data User = User {name :: String, id :: Int} deriving Generic
 
-{-instance ToJSON User where-}
-    {-toJSON (User name id) = -}
-        {-object ["id" .= id,-}
-                {-"name" .= name]-}
-
--- we can avoid it if we add derived deriving from Generic
-{-instance ToJSON UsersList where-}
-    {-toJSON -}
-
 instance ToJSON User
 instance ToJSON UsersList 
 
+getUsersListMok :: UsersList
 getUsersListMok =
    (UsersList . map (uncurry User)) [("Пётр Петров", 2), ("Василий Пупкин", 1), ("Лэнс Армстронг", 3)]
 
+getUsersList :: Connection -> UsersList 
 getUsersList connection = getUsersListMok
 
 
+getCommonCompetitionsRows :: Connection -> String -> String -> ResultTile
+getCommonCompetitionsRows connection = getCommonCompetitionsRowsMok
 
-data ResultRow = ResultRow {place :: Int, name :: String, otherData :: [(String, Int)]} deriving Generic
+-- type describing a tile of results for a common competition for two or more athletes
+-- date - competition date
+-- title - competition name
+-- columnNames - names of columns in the result table e.g. place, time, team, city, etc
+-- members - an array of rows in result table. One row for every athlete. 
+data ResultTile = ResultTile {date :: Day, title :: String, columnNames :: [String], members :: [ResultRow]} deriving (Generic)
+data ResultRow = ResultRow [String] deriving (Generic)
 
 instance ToJSON ResultRow
+instance ToJSON ResultTile
 
-getCommonCompetitionsRows connection name1 name2 = 
-    [(ResultRow {place = 10, name = name1, otherData = [("lap1time", 10), ("lap2time", 12)]},
-      ResultRow {place = 2, name = name2, otherData = [("lap1time", 7), ("lap2time", 10)]}),
-         
-     (ResultRow {place = 50, name = name2, otherData = [("lap1time", 29), ("lap2time", 40)]},
-      ResultRow {place = 42, name = name2, otherData = [("lap1time", 30), ("lap2time", 35)]})]
+-- the analogue of (:) 
+(<>) :: GShow a => a -> ResultRow -> ResultRow
+infixr 5 <>
+newValue <> (ResultRow values) = ResultRow $ (gShow newValue) : values
+
+getCommonCompetitionsRowsMok :: String -> String -> ResultTile
+getCommonCompetitionsRowsMok name1 name2 = 
+    ResultTile {
+        date = fromGregorian 2017 08 19,
+        title = "Токсовский марафон", 
+        columnNames = "place" : "bib" : "name" :  "team"                 :  "lap1time": "lap1place" :  "lap2time": "lap2place" :  "time"    :  "lag"    :  [],
+        members = [    11     <> 15   <> name1 <> "FAST-BIKE Велосервис" <> "1:00:03" <> 6          <> "2:00:45" <> 11         <> "2:00:45" <> "+09:54" <> ResultRow [],
+                       22     <> 14   <> name2 <> "Rikkir-9RusMTB"       <> "1:01:26" <> 14         <> "2:05:49" <> 22         <> "2:05:49" <> "+14:58" <> ResultRow []]
+    }
+
+
+
+
+
+
+
+
 
 

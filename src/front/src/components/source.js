@@ -1,3 +1,3 @@
-var json = [[{"otherData":[["lap1time",10],["lap2time",12]],"name":"Misha","place":10},{"otherData":[["lap1time",7],["lap2time",10]],"name":"Ilya","place":2}],[{"otherData":[["lap1time",29],["lap2time",40]],"name":"Ilya","place":50},{"otherData":[["lap1time",30],["lap2time",35]],"name":"Ilya","place":42}]]
+var json = {"members":[["11","15","Misha","FAST-BIKE Велосервис","1:00:03","6","2:00:45","11","2:00:45","+09:54"],["22","14","Ilyd","Rikkir-9RusMTB","1:01:26","14","2:05:49","22","2:05:49","+14:58"]],"date":"2017-08-19","columnNames":["place","bib","name","team","lap1time","lap1place","lap2time","lap2place","time","lag"],"title":"Токсовский марафон"}
 
 exports.json = json;

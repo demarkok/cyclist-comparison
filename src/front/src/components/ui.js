@@ -62,7 +62,8 @@ class UI extends React.Component {
 
 	                <div style={centerComponents}>
 		                <RaisedButton label="Compare"
-		                			  style={{ marginBottom: "10px" }}
+		                			  style={{ marginBottom: "10px",
+                                               marginTop: "15px" }}
 		                              onClick={this.validation.bind(this)}/>
 	                </div>
                 </Paper>
@@ -110,6 +111,7 @@ class UI extends React.Component {
 
         // TODO: create url request and recieve response
         let serverResponse = jsonSource.json;
+        console.log(serverResponse);
     };
 }
 

@@ -14,7 +14,8 @@ class Results extends React.Component {
         for (var i = 0; i < this.props.items.length; i++) {
             tiles.push(
                 <Tile data={this.props.items[i]}
-                      style={{ marginTop: "20px" }}/> 
+                      style={{ marginTop: "20px" }}
+                      center={this.props.center}/> 
             );
         }
 

@@ -25,9 +25,12 @@ class UI extends React.Component {
                 <h1 style={{ textAlign: "center",
                 	         fontFamily: "Roboto" }}> Comparison </h1>
 
-                <Form center={centerComponents}/>
+                <Form center={centerComponents}
+                      />
 
-                <Results items={jsonSource.json}/>
+                <Results items={jsonSource.json}
+                         center={centerComponents}
+                         />
             </div>
         );
     };

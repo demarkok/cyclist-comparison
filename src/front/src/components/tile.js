@@ -21,7 +21,7 @@ class Tile extends React.Component {
         	<Paper zDepth={2}
         	  	 	 style={{ marginTop: "20px" }}>
 	        	<Table>
-	        		<TableHeader style={css.centerComponents} 
+	        		<TableHeader style={this.props.center} 
 	        								displaySelectAll={false}
 	            						adjustForCheckbox={false}>
 			          <TableRow>

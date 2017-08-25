@@ -1,2 +1,4 @@
 .stack-work/
 *.swp
+**/build/
+src/front/node_modules/

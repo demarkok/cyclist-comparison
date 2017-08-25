@@ -108,10 +108,8 @@ class UI extends React.Component {
             emptySecondNameError: null
         });
 
-        console.log(this.state.firstName + " " + this.state.secondName);
         // TODO: create url request and recieve response
         let serverResponse = jsonSource.json;
-        console.log(serverResponse);
     };
 }
 

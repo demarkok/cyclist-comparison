@@ -1,7 +1,8 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
-import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
+var jsonSource = require('./source.js');
 
 let centerRow = {
     display: "flex",
@@ -60,9 +61,9 @@ class UI extends React.Component {
 	                </div>
 
 	                <div style={centerComponents}>
-		                <FlatButton label="Compare"
-		                			style={{ marginBottom: "10px" }}
-		                            onClick={this.validation.bind(this)}/>
+		                <RaisedButton label="Compare"
+		                			  style={{ marginBottom: "10px" }}
+		                              onClick={this.validation.bind(this)}/>
 	                </div>
                 </Paper>
 
@@ -108,6 +109,9 @@ class UI extends React.Component {
         });
 
         console.log(this.state.firstName + " " + this.state.secondName);
+        // TODO: create url request and recieve response
+        let serverResponse = jsonSource.json;
+        console.log(serverResponse);
     };
 }
 

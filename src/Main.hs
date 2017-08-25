@@ -36,14 +36,15 @@ import Network.Wai.Middleware.Static
 
 
 apiServer :: Connection -> ScottyM()
-apiServer conn = do
+apiServer connection = do
     get "/api/getCommonCompetitions" $ do
-        first <- param "name1"
-        second <- param "name2"
-        liftAndCatchIO $ putStrLn $ "name1 = " ++ first
-        liftAndCatchIO $ putStrLn $ "name2 = " ++ second 
+        name1 <- param "name1"
+        name2 <- param "name2"
+        liftAndCatchIO $ putStrLn $ "name1 = " ++ name1
+        liftAndCatchIO $ putStrLn $ "name2 = " ++ name2 
+        json $ (getCommonCompetitionsRows connection name1 name2)
     get "/api/getUsersList" $ do
-        json getUsersList 
+        json $ (getUsersList connection)
 
 
 

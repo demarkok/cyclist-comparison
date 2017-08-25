@@ -3,10 +3,16 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import Form from './form.js';
-import css from './form.js'
-var jsonSource = require('./source.js');
+import Results from './results.js';
+import jsonSource from './source.js';
 
-const emptyError = "Please, enter sportsman name";
+let centerComponents = {
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+};
 
 class UI extends React.Component {
     constructor() {
@@ -15,15 +21,17 @@ class UI extends React.Component {
 
     render() {
         return (
-            <div style={css.centerComponents}> 
+            <div style={centerComponents}> 
                 <h1 style={{ textAlign: "center",
                 	         fontFamily: "Roboto" }}> Comparison </h1>
 
-                <Form />
+                <Form center={centerComponents}/>
 
+                <Results items={jsonSource.json}/>
             </div>
         );
     };
 };
 
 export default UI;
+exports.centerComponents = centerComponents;

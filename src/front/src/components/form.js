@@ -11,17 +11,11 @@ let centerRow = {
     alignItems: "center",
 };
 
-let centerComponents = {
-    display: "flex",
-    flexDirection: "column",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    alignItems: "center",
-};
+const emptyError = "Please, enter sportsman name";
 
 class Form extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             firstName: "",
@@ -33,9 +27,8 @@ class Form extends React.Component {
 
     render() {
         return (
-            <div style={centerComponents}>
-                <Paper zDepth={2}
-                   style={{ width: "40%" }}>
+            <div style={this.props.center}>
+                <Paper zDepth={2}>
                     <div style={centerRow}>
                         <TextField floatingLabelText="First name"
                                    style={{ marginRight: "10px", 
@@ -51,7 +44,7 @@ class Form extends React.Component {
                                    />
                     </div>
 
-                    <div style={centerComponents}>
+                    <div style={this.props.center}>
                         <RaisedButton label="Compare"
                                       style={{ marginBottom: "10px",
                                                marginTop: "15px" }}
@@ -105,5 +98,4 @@ class Form extends React.Component {
     };  
 };
 
-exports.centerComponents = centerComponents;
 export default Form;

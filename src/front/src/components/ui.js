@@ -1,8 +1,17 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
+import Paper from 'material-ui/Paper';
 
-let center = {
+let centerRow = {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+};
+
+let centerComponents = {
     display: "flex",
     flexDirection: "column",
     flexWrap: "wrap",
@@ -24,24 +33,38 @@ class UI extends React.Component {
         };
     }
 
+    // TODO : react style
+    // TODO : file with form and handling
     render() {
         return (
-            <div> 
-                <h1 style={{ textAlign: "center" }}> Comparison </h1>
-                <TextField floatingLabelText="First name"
-                           style={{ marginRight: "10px" }}
-                           errorText={this.state.emptyFirstNameError}
-                           onChange={this.handleFirstNameChange.bind(this)
-                           />
+            <div style={centerComponents}> 
+                <h1 style={{ textAlign: "center",
+                	         fontFamily: "Roboto" }}> Comparison </h1>
 
-                <TextField floatingLabelText="Second name",
-                           errorText={this.state.emptySecondNameError}
-                           onChange={this.handleSecondNameChange.bind(this)
-                           />
+                <Paper zDepth={2}>
 
-                <FlatButton label="Compare"
-                            style={center}
-                            onClick={this.validation.bind(this)}/>
+	                <div style={centerRow}>
+		                <TextField floatingLabelText="First name"
+		                           style={{ marginRight: "10px", 
+		                           			marginLeft: "10px" }}
+		                           errorText={this.state.emptyFirstNameError}
+		                           onChange={this.handleFirstNameChange.bind(this)}
+		                           />
+
+		                <TextField floatingLabelText="Second name"
+		                		   style={{ marginRight: "10px" }}
+		                           errorText={this.state.emptySecondNameError}
+		                           onChange={this.handleSecondNameChange.bind(this)}
+		                           />
+
+	                </div>
+
+	                <div style={centerComponents}>
+		                <FlatButton label="Compare"
+		                			style={{ marginBottom: "10px" }}
+		                            onClick={this.validation.bind(this)}/>
+	                </div>
+                </Paper>
 
             </div>
         );

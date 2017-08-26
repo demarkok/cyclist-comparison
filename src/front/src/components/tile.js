@@ -18,21 +18,29 @@ class Tile extends React.Component {
 
     render() {
         return (
-        	<Paper zDepth={2}
-        	  	 	 style={{ marginTop: "20px" }}>
-	        	<Table selectable={false}>
+          	<Paper zDepth={2}
+          	  	 	 style={{ marginTop: "20px" }}>
 
-	        		<TableHeader displaySelectAll={false}
-	            						adjustForCheckbox={false}>
-			          
-			         {this.renderColumnNames()}
-			          
-			        </TableHeader>
+              <div>
+                <h3 style={{ textAlign: "center" }}> {this.props.data.title} </h3>
 
-              {this.renderMembers()}
+    	        	<Table selectable={false}>
 
-			      </Table>
-		      </Paper>
+    	        		<TableHeader displaySelectAll={false}
+    	            						adjustForCheckbox={false}>
+    			          
+    			         {this.renderColumnNames()}
+    			          
+    			        </TableHeader>
+
+                  {this.renderMembers()}
+
+    			      </Table>
+
+                <h4 style={{ textAlign: "center" }}> {this.props.data.date} </h4>
+              </div>
+
+  		      </Paper>
         );
     };
 

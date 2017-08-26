@@ -13,7 +13,7 @@ import GHC.Generics
 import Data.Time
 import Database.PostgreSQL.Simple
 
-import GShow
+import ToString
 
 
 data UsersList = UsersList [User] deriving Generic 
@@ -45,9 +45,9 @@ instance ToJSON ResultRow
 instance ToJSON ResultTile
 
 -- the analogue of (:) 
-(<>) :: GShow a => a -> ResultRow -> ResultRow
+(<>) :: ToString a => a -> ResultRow -> ResultRow
 infixr 5 <>
-newValue <> (ResultRow values) = ResultRow $ (gShow newValue) : values
+newValue <> (ResultRow values) = ResultRow $ (toString newValue) : values
 
 getCommonCompetitionsRowsMok :: String -> String -> [ResultTile]
 getCommonCompetitionsRowsMok name1 name2 =

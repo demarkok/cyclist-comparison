@@ -20,17 +20,49 @@ class Tile extends React.Component {
         return (
         	<Paper zDepth={2}
         	  	 	 style={{ marginTop: "20px" }}>
-	        	<Table>
-	        		<TableHeader style={this.props.center} 
-	        								displaySelectAll={false}
+	        	<Table selectable={false}>
+
+	        		<TableHeader displaySelectAll={false}
 	            						adjustForCheckbox={false}>
-			          <TableRow>
-			            {this.renderColumnNames()}
-			          </TableRow>
-			         </TableHeader>
+			          
+			         {this.renderColumnNames()}
+			          
+			        </TableHeader>
+
+              {this.renderMembers()}
+
 			      </Table>
 		      </Paper>
         );
+    };
+
+    createMember = (data) => {
+      var columns = [];
+
+      for (var i = 0; i < data.length; i++) {
+            columns.push(<TableRowColumn> {data[i]} </TableRowColumn>);
+      };
+
+      return (
+        <TableRow>
+          {columns}
+        </TableRow>
+      );
+    };
+
+    renderMembers = () => {
+      var members = [];
+
+      for (var i = 0; i < this.props.data.members.length; i++) {
+            var memberData = this.props.data.members[i];
+            members.push(this.createMember(memberData))
+      };
+
+      return (
+        <TableBody displayRowCheckbox={false}>
+          {members}
+        </TableBody>
+      );
     };
 
     renderColumnNames = () => {
@@ -42,9 +74,9 @@ class Tile extends React.Component {
 			  };
 
     	  return (
-    	  		<div style={{ marginTop: "50px" }}>
+    	  		<TableRow style={{ marginTop: "50px" }}>
 							{columns}
-						</div>
+						</TableRow>
 	   		);
     };
 };

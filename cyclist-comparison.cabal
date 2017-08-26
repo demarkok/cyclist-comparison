@@ -24,4 +24,5 @@ executable cyclist-comparison
                        postgresql-simple,
                        text,
                        network,
-                       wai-middleware-static 
+                       wai-middleware-static,
+                       bytestring

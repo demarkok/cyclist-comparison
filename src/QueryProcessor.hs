@@ -5,33 +5,46 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 
-module QueryProcessor (getCommonCompetitionsRows, getUsersList) where
+{-module QueryProcessor (getCommonCompetitionsRows, getAthleteList) where-}
+
+module QueryProcessor where
 
 import Data.Aeson
 import GHC.Generics
 import Data.Time
 import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToRow
+import Database.PostgreSQL.Simple.FromRow
+import Database.PostgreSQL.Simple.ToField
+import Database.PostgreSQL.Simple.SqlQQ
 
 import ToString
 
 
-data UsersList = UsersList [User] deriving Generic 
-data User = User {name :: String, id :: Int} deriving Generic
-
-instance ToJSON User
-instance ToJSON UsersList 
-
-getUsersListMok :: UsersList
-getUsersListMok =
-   (UsersList . map (uncurry User)) [("Пётр Петров", 2), ("Василий Пупкин", 1), ("Лэнс Армстронг", 3)]
-
-getUsersList :: Connection -> UsersList 
-getUsersList connection = getUsersListMok
-
+getAthleteList :: Connection -> IO AthleteList 
+getAthleteList connection = AthleteList <$> (query_ connection queryText :: IO[Athlete]) where
+    queryText = [sql| SELECT * FROM athletes |] 
+    
 
 getCommonCompetitionsRows :: Connection -> String -> String -> [ResultTile]
-getCommonCompetitionsRows connection = getCommonCompetitionsRowsMok
+getCommonCompetitionsRows connection = mokCommonCompetitionsRows
+
+
+------------------
+
+
+data AthleteList = AthleteList [Athlete] deriving Generic 
+data Athlete = Athlete {id :: Int, name :: String} deriving Generic
+
+instance ToJSON Athlete
+instance ToJSON AthleteList 
+
+instance FromRow Athlete 
+instance ToRow Athlete
+
 
 -- type describing a tile of results for a common competition for two or more athletes
 -- date - competition date
@@ -49,8 +62,17 @@ instance ToJSON ResultTile
 infixr 5 <>
 newValue <> (ResultRow values) = ResultRow $ (toString newValue) : values
 
-getCommonCompetitionsRowsMok :: String -> String -> [ResultTile]
-getCommonCompetitionsRowsMok name1 name2 =
+
+------------------
+
+
+mokAthleteList :: AthleteList
+mokAthleteList =
+   (AthleteList . map (uncurry Athlete)) [(2, "Пётр Петров"), (1, "Василий Пупкин"), (3, "Лэнс Армстронг")]
+
+
+mokCommonCompetitionsRows :: String -> String -> [ResultTile]
+mokCommonCompetitionsRows name1 name2 =
     [ 
         ResultTile {
             date = fromGregorian 2017 08 19,
@@ -74,6 +96,7 @@ getCommonCompetitionsRowsMok name1 name2 =
                            7    <>  name1  <> "#школамтб" <>  69   <>  1982 <>  "00:11:29" <> "00:22:28" <>	"00:33:09" <> "00:44:06" <> "00:55:10" <>"01:06:11" <> "30"       <> ResultRow []]   
         }
     ]
+
 
 
 

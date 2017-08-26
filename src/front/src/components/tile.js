@@ -1,15 +1,7 @@
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import {List, ListItem} from 'material-ui/List';
-import {
-  Table,
-  TableBody,
-  TableHeader,
-  TableHeaderColumn,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table';
-import css from './ui.js';
+import { Header, Table } from 'semantic-ui-react';
 
 class Tile extends React.Component {
     constructor(props) {
@@ -21,17 +13,16 @@ class Tile extends React.Component {
           	<Paper zDepth={2}
           	  	 	 style={{ marginTop: "20px" }}>
 
-              <div>
+              <div style={{ marginTop: "50px" }}>
                 <h3 style={{ textAlign: "center" }}> {this.props.data.title} </h3>
 
-    	        	<Table selectable={false}>
+    	        	<Table celled padded>
 
-    	        		<TableHeader displaySelectAll={false}
-    	            						adjustForCheckbox={false}>
+    	        		<Table.Header>
     			          
     			         {this.renderColumnNames()}
     			          
-    			        </TableHeader>
+    			        </Table.Header>
 
                   {this.renderMembers()}
 
@@ -48,13 +39,13 @@ class Tile extends React.Component {
       var columns = [];
 
       for (var i = 0; i < data.length; i++) {
-            columns.push(<TableRowColumn> {data[i]} </TableRowColumn>);
+            columns.push(<Table.Cell> {data[i]} </Table.Cell>);
       };
 
       return (
-        <TableRow>
+        <Table.Row>
           {columns}
-        </TableRow>
+        </Table.Row>
       );
     };
 
@@ -67,9 +58,9 @@ class Tile extends React.Component {
       };
 
       return (
-        <TableBody displayRowCheckbox={false}>
+        <Table.Body>
           {members}
-        </TableBody>
+        </Table.Body>
       );
     };
 
@@ -78,13 +69,18 @@ class Tile extends React.Component {
 
     		for (var i = 0; i < this.props.data.columnNames.length; i++) {
 	   				let column = this.props.data.columnNames[i];
-	   				columns.push(<TableHeaderColumn> {column} </TableHeaderColumn>);
+
+            if (i == 0) {
+              columns.push(<Table.HeaderCell singleLine> {column} </Table.HeaderCell>);
+              continue;
+            }
+	   				columns.push(<Table.HeaderCell> {column} </Table.HeaderCell>);
 			  };
 
     	  return (
-    	  		<TableRow style={{ marginTop: "50px" }}>
+    	  		<Table.Row>
 							{columns}
-						</TableRow>
+						</Table.Row>
 	   		);
     };
 };

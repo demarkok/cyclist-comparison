@@ -35,4 +35,3 @@ main = do
     scotty 1234 $ do
         middleware $ staticPolicy (noDots >-> addBase "src/front") -- get static files (index.html, *.js, etc) 
         apiServer dbConnection
-            

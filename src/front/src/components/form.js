@@ -29,7 +29,7 @@ class Form extends React.Component {
     render() {
         return (
             <div style={this.props.center}>
-                <Paper zDepth={2}>
+                <Paper zDepth={2} >
                     <div style={centerRow}>
                         <TextField floatingLabelText="First name"
                                    style={{ marginRight: "10px", 

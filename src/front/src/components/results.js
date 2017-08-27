@@ -1,16 +1,10 @@
 import React from 'react';
 import Paper from 'material-ui/Paper';
-import {List, ListItem} from 'material-ui/List';
 import Tile from './tile.js';
 import { Statistic } from 'semantic-ui-react';
 
-const winColor = {
-    color: "#F8FFEE"
-}; 
-
-const loseColor = {
-    color: "#FFF6F5"
-};
+const winColor = "#F8FFEE";
+const loseColor = "#FFF6F5";
 
 class Results extends React.Component {
     constructor(props) {
@@ -27,13 +21,14 @@ class Results extends React.Component {
             tiles.push(
                 <Tile data={tile}
                       style={{ marginTop: "20px" }}
-                      center={this.props.center}/> 
+                      center={this.props.center}
+                      tileColor={color}/> 
             );
         }
 
         return (
             <div>
-                    <div>
+                <div>
                     <h2> Ilya </h2>
                     <Statistic value='2' label='Wins' />
                     <Statistic value='1' label='Lose' />
@@ -48,8 +43,30 @@ class Results extends React.Component {
         );
     }; 
 
+    getNameIndex = (tile) => {
+        for (var i = 0; i < tile.columnNames.length; i++) {
+            let column = tile.columnNames[i];
+
+            // assume that column names contains this record
+            if (column === "name") {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
     identifyTile = (tile) => {
-        return winColor;
+        let nameIndex = this.getNameIndex(tile);
+
+        console.log(nameIndex);
+        // assume, that there is only two persons
+        // first line is the winner of two persons. firstName -- name of our team
+        if (tile.members[0][nameIndex] === this.props.firstName) {
+            return winColor;
+        }
+
+        return loseColor;
     };
 };
 

@@ -13,7 +13,7 @@ class Tile extends React.Component {
     render() {
         return (
           	<Paper zDepth={2}
-          	  	 	 style={{ marginTop: "20px" }}>
+          	  	 	 style={{ marginTop: "20px", backgroundColor: this.props.tileColor }}>
 
               <div style={{ marginTop: "50px" }}>
                 <h3 style={{ textAlign: "center" }}> {this.props.data.title} </h3>

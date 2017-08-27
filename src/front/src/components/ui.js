@@ -26,7 +26,6 @@ class UI extends React.Component {
     };
 
     renderResults = () => {
-        console.log(this.state);
         if (this.state.textEntered) {
             return (
                 <Results items={jsonSource.json}

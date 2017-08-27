@@ -17,22 +17,48 @@ let centerComponents = {
 class UI extends React.Component {
     constructor() {
         super();
+
+        this.state = {
+            textEntered: false,
+            firstName: "",
+            secondName: ""
+        };
+    };
+
+    renderResults = () => {
+        if (this.state.textEntered) {
+            return (
+                <Results items={jsonSource.json}
+                         center={centerComponents}
+                         firstName={this.state.firstName}
+                         secondName={this.state.secondName}
+                         />
+            );
+        };
     };
 
     render() {
         return (
             <div style={centerComponents}> 
                 <h1 style={{ textAlign: "center",
-                	         fontFamily: "Roboto" }}> Comparison </h1>
+                	         fontFamily: "Roboto",
+                             marginBottom: "30px" }}> Comparison </h1>
 
                 <Form center={centerComponents}
+                      sendToPreviousComponent={this.getData.bind(this)}
                       />
 
-                <Results items={jsonSource.json}
-                         center={centerComponents}
-                         />
+                {this.renderResults()}
             </div>
         );
+    };
+
+    getData = (name1, name2) => {
+        this.setState({
+            textEntered: true,
+            firstName: name1,
+            secondName: name2,
+        });
     };
 };
 

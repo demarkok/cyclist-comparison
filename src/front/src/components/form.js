@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
+import { deepPurple500 } from 'material-ui/styles/colors';
 
 let centerRow = {
     display: "flex",
@@ -28,18 +29,20 @@ class Form extends React.Component {
     render() {
         return (
             <div style={this.props.center}>
-                <Paper zDepth={2}>
+                <Paper zDepth={2} >
                     <div style={centerRow}>
                         <TextField floatingLabelText="First name"
                                    style={{ marginRight: "10px", 
                                             marginLeft: "10px" }}
                                    errorText={this.state.emptyFirstNameError}
+                                   errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleFirstNameChange.bind(this)}
                                    />
 
                         <TextField floatingLabelText="Second name"
                                    style={{ marginRight: "10px" }}
                                    errorText={this.state.emptySecondNameError}
+                                   errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleSecondNameChange.bind(this)}
                                    />
                     </div>
@@ -93,6 +96,7 @@ class Form extends React.Component {
             emptySecondNameError: null
         });
 
+        this.props.sendToPreviousComponent(this.state.firstName, this.state.secondName);
         // TODO: create url request and recieve response
         // and send response to ui component
     };  

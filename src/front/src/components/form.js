@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
+import { deepPurple500 } from 'material-ui/styles/colors';
 
 let centerRow = {
     display: "flex",
@@ -34,12 +35,14 @@ class Form extends React.Component {
                                    style={{ marginRight: "10px", 
                                             marginLeft: "10px" }}
                                    errorText={this.state.emptyFirstNameError}
+                                   errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleFirstNameChange.bind(this)}
                                    />
 
                         <TextField floatingLabelText="Second name"
                                    style={{ marginRight: "10px" }}
                                    errorText={this.state.emptySecondNameError}
+                                   errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleSecondNameChange.bind(this)}
                                    />
                     </div>

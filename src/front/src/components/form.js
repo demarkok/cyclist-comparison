@@ -96,6 +96,7 @@ class Form extends React.Component {
             emptySecondNameError: null
         });
 
+        this.props.sendToPreviousComponent(this.state.firstName, this.state.secondName);
         // TODO: create url request and recieve response
         // and send response to ui component
     };  

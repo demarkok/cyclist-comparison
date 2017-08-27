@@ -4,6 +4,14 @@ import {List, ListItem} from 'material-ui/List';
 import Tile from './tile.js';
 import { Statistic } from 'semantic-ui-react';
 
+const winColor = {
+    color: "#F8FFEE"
+}; 
+
+const loseColor = {
+    color: "#FFF6F5"
+};
+
 class Results extends React.Component {
     constructor(props) {
         super(props);
@@ -13,8 +21,11 @@ class Results extends React.Component {
         var tiles = [];
 
         for (var i = 0; i < this.props.items.length; i++) {
+            let tile = this.props.items[i];
+            let color = this.identifyTile(tile);
+
             tiles.push(
-                <Tile data={this.props.items[i]}
+                <Tile data={tile}
                       style={{ marginTop: "20px" }}
                       center={this.props.center}/> 
             );
@@ -22,7 +33,6 @@ class Results extends React.Component {
 
         return (
             <div>
-                
                     <div>
                     <h2> Ilya </h2>
                     <Statistic value='2' label='Wins' />
@@ -37,6 +47,10 @@ class Results extends React.Component {
             </div>
         );
     }; 
+
+    identifyTile = (tile) => {
+        return winColor;
+    };
 };
 
 export default Results;

@@ -3,6 +3,8 @@ import Paper from 'material-ui/Paper';
 import {List, ListItem} from 'material-ui/List';
 import { Header, Table } from 'semantic-ui-react';
 
+const inf = 10000000;
+
 class Tile extends React.Component {
     constructor(props) {
         super(props);
@@ -39,7 +41,7 @@ class Tile extends React.Component {
       var columns = [];
 
       for (var i = 0; i < data.length; i++) {
-            columns.push(<Table.Cell> {data[i]} </Table.Cell>);
+        columns.push(<Table.Cell> {data[i]} </Table.Cell>);
       };
 
       return (
@@ -51,9 +53,11 @@ class Tile extends React.Component {
 
     renderMembers = () => {
       var members = [];
+      let data = this.props.data.members;
 
-      for (var i = 0; i < this.props.data.members.length; i++) {
-            var memberData = this.props.data.members[i];
+      for (var i = 0; i < data.length; i++) {
+            var memberData = data[i];
+
             members.push(this.createMember(memberData))
       };
 
@@ -74,6 +78,7 @@ class Tile extends React.Component {
               columns.push(<Table.HeaderCell singleLine> {column} </Table.HeaderCell>);
               continue;
             }
+
 	   				columns.push(<Table.HeaderCell> {column} </Table.HeaderCell>);
 			  };
 

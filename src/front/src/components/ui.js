@@ -17,6 +17,25 @@ let centerComponents = {
 class UI extends React.Component {
     constructor() {
         super();
+
+        this.state = {
+            textEntered: false,
+            firstName: "",
+            secondName: ""
+        };
+    };
+
+    renderResults = () => {
+        console.log(this.state);
+        if (this.state.textEntered) {
+            return (
+                <Results items={jsonSource.json}
+                         center={centerComponents}
+                         firstName={this.state.firstName}
+                         secondName={this.state.secondName}
+                         />
+            );
+        };
     };
 
     render() {
@@ -26,13 +45,20 @@ class UI extends React.Component {
                 	         fontFamily: "Roboto" }}> Comparison </h1>
 
                 <Form center={centerComponents}
+                      sendToPreviousComponent={this.getData.bind(this)}
                       />
 
-                <Results items={jsonSource.json}
-                         center={centerComponents}
-                         />
+                {this.renderResults()}
             </div>
         );
+    };
+
+    getData = (name1, name2) => {
+        this.setState({
+            textEntered: true,
+            firstName: name1,
+            secondName: name2,
+        });
     };
 };
 

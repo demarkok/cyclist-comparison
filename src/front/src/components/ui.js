@@ -41,7 +41,8 @@ class UI extends React.Component {
         return (
             <div style={centerComponents}> 
                 <h1 style={{ textAlign: "center",
-                	         fontFamily: "Roboto" }}> Comparison </h1>
+                	         fontFamily: "Roboto",
+                             marginBottom: "30px" }}> Comparison </h1>
 
                 <Form center={centerComponents}
                       sendToPreviousComponent={this.getData.bind(this)}

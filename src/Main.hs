@@ -18,12 +18,14 @@ apiServer connection = do
     get "/api/getCommonCompetitions" $ do
         name1 <- param "name1"
         name2 <- param "name2"
-        json $ (getCommonCompetitionsRows connection name1 name2)
+        rows <- liftIO $ getCommonCompetitionsRows connection name1 name2
+        json rows 
     get "/api/getAthleteList" $ do
         list <- liftIO $ getAthleteList connection
         json list
 
 
+conn = connectPostgreSQL "host='192.168.124.244' user='postgres' dbname='main' password='password'"
 
 main :: IO ()
 main = do

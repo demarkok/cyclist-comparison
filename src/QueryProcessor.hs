@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE IncoherentInstances #-}
@@ -5,10 +6,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-{-module QueryProcessor (getCommonCompetitionsRows, getAthleteList) where-}
 
 module QueryProcessor where
 
@@ -21,16 +20,72 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.SqlQQ
 
+import Data.String
+import Data.List
+
 import ToString
 
+
+-----------------
+-- TODO make typing stronger: wrap Strings.
 
 getAthleteList :: Connection -> IO AthleteList 
 getAthleteList connection = AthleteList <$> (query_ connection queryText :: IO[Athlete]) where
     queryText = [sql| SELECT * FROM athletes |] 
     
 
-getCommonCompetitionsRows :: Connection -> String -> String -> [ResultTile]
-getCommonCompetitionsRows connection = mokCommonCompetitionsRows
+getCommonCompetitionsRows :: Connection -> String -> String -> IO[ResultTile]
+getCommonCompetitionsRows connection name1 name2 = do
+    competitionIds <- (map fromOnly) <$> (query connection queryIntersect (name1, name2) :: IO[Only Int])
+    athleteIds <- traverse (getAthleteId connection) [name1, name2]
+    traverse (\x -> getResultTile connection x athleteIds) competitionIds 
+
+
+-- database connection -> athlete name -> athlete id in database
+getAthleteId :: Connection -> String -> IO Int
+getAthleteId connection name = do
+    [Only athleteId] <- query connection queryGetAthleteId (Only name) :: IO [Only Int]
+    return athleteId
+
+-- database connection -> competition id -> list of athletes -> a tile containing rows corresponding to 
+-- given athletes in given competition
+getResultTile :: Connection -> Int -> [Int] -> IO(ResultTile)
+getResultTile connection competitionId athleteIds = do
+    [Only date] <- (query connection queryGetDate (Only competitionId) :: IO[Only Day])
+    [[name]] <- (query connection queryGetCompetitionName (Only competitionId) :: IO[[String]])
+    
+    columnNamesWrapped <- (query connection queryGetColumnNames (Only name) :: IO[[String]])
+    let columnNames = concat columnNamesWrapped
+    resultRows <- traverse (getResultRow columnNames connection name) athleteIds
+    return $ ResultTile date name columnNames resultRows
+
+-- list of column names in result table -> database connection -> name of table in database corresponding competition ->
+-- -> athlete id -> a row from the result table corresponding given athlete containing given columns
+getResultRow :: [String] -> Connection -> String -> Int -> IO ResultRow
+getResultRow columnNames connection competitionName athleteId = do
+    [rowContentWrapped] <- (query_ connection (queryGetRow columnNames competitionName athleteId) :: IO[[Maybe String]])
+    let rowContent = unwrap <$> rowContentWrapped where
+        unwrap (Just s) = s
+        unwrap Nothing = ""
+    return $ ResultRow rowContent 
+
+
+-- insert cast to Text in the query, due to number and types of columns are undefined
+queryGetRow columnNames competitionName athleteId = fromString $ "select " ++ castColumnNames ++ " from " ++ competitionName ++ " WHERE athlete_id = " ++ (show athleteId) where
+   castColumnNames = intercalate "," $ (\name -> name ++ "::Text") <$> columnNames 
+
+queryGetColumnNames = [sql| SELECT column_name FROM information_schema.columns WHERE table_name = ? |] 
+queryGetCompetitionName = [sql| select name from competitions WHERE id = ? |]
+queryGetDate = [sql| select date from competitions WHERE id = ? |]
+queryIntersect = [sql| select competition_id from participations WHERE
+	                       athlete_id IN  
+	                           (select id from athletes where name = ?)
+                       intersect
+                       select competition_id from participations where
+                	       athlete_id IN  
+                            	(select id from athletes where name = ?) |]
+
+queryGetAthleteId = [sql| select id from athletes WHERE name = ? |]
 
 
 ------------------

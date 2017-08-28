@@ -29,7 +29,7 @@ class Comparison extends React.Component {
     renderResults = () => {
         if (this.state.textEntered) {
             return (
-                <Results items={jsonSource.json}
+                <Results items={this.state.items}
                          center={centerComponents}
                          firstName={this.state.firstName}
                          secondName={this.state.secondName}
@@ -50,11 +50,12 @@ class Comparison extends React.Component {
         );
     };
 
-    getData = (name1, name2) => {
+    getData = (name1, name2, items) => {
         this.setState({
             textEntered: true,
             firstName: name1,
             secondName: name2,
+            items: items,
         });
     };
 };

@@ -81,7 +81,10 @@ class Form extends React.Component {
     };
 
     validation = () => {
-        if (this.state.firstName === "") {
+        let name1 = this.state.firstName;
+        let name2 = this.state.secondName;
+
+        if (name1 === "") {
             this.setState({
                 emptyFirstNameError: emptyError
             });
@@ -93,7 +96,7 @@ class Form extends React.Component {
             emptyFirstNameError: null
         });
 
-        if (this.state.secondName === "") {
+        if (name2 === "") {
             this.setState({
                 emptySecondNameError: emptyError
             });
@@ -105,9 +108,25 @@ class Form extends React.Component {
             emptySecondNameError: null
         });
 
-        this.props.sendToPreviousComponent(this.state.firstName, this.state.secondName);
-        // TODO: create url request and recieve response
-        // and send response to ui component
+        let params = "name1=" + name1 + "&" + "name2=" + name2;  
+        let requestUrl = "http://localhost:1234/api/getCommonCompetitions?";
+        var results = null;
+        $.ajax({
+            type: "POST",
+            url: requestUrl,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(requestData),
+            dataType: "json",
+            success: function(response) {
+                if (response.type != "OK") {
+                    return;
+                }
+
+                results = response.data;
+            }
+        });
+
+        this.props.sendToPreviousComponent(name1, name2, results);
     };  
 };
 

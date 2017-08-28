@@ -3,3 +3,4 @@
 **/build/
 src/front/node_modules/
 *.DS_Store
+password

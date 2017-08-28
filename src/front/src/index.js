@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import UI from './components/ui.js';
+import MenuHeader from './components/menu.js';
 
 injectTapEventPlugin();
 const App = () => (
     <MuiThemeProvider>
-        <UI />
+        <MenuHeader />
     </MuiThemeProvider>
 );
 

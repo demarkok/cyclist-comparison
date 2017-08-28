@@ -15,7 +15,7 @@ let centerComponents = {
     alignItems: "center",
 };
 
-class UI extends React.Component {
+class Comparison extends React.Component {
     constructor() {
         super();
 
@@ -41,8 +41,6 @@ class UI extends React.Component {
     render() {
         return (
             <div style={centerComponents}> 
-                <MenuHeader />
-
                 <Form center={centerComponents}
                       sendToPreviousComponent={this.getData.bind(this)}
                       />
@@ -61,5 +59,5 @@ class UI extends React.Component {
     };
 };
 
-export default UI;
+export default Comparison;
 exports.centerComponents = centerComponents;

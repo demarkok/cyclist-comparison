@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
+import $ from "jquery";
 import { deepPurple500 } from 'material-ui/styles/colors';
 
 let centerRow = {
@@ -109,24 +110,18 @@ class Form extends React.Component {
         });
 
         let params = "name1=" + name1 + "&" + "name2=" + name2;  
-        let requestUrl = "http://localhost:1234/api/getCommonCompetitions?";
-        var results = null;
+        let requestUrl = encodeURI("http://localhost:1234/api/getCommonCompetitions?" + params);
+        let proceedData = this.props.sendToPreviousComponent;
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: requestUrl,
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(requestData),
             dataType: "json",
             success: function(response) {
-                if (response.type != "OK") {
-                    return;
-                }
-
-                results = response.data;
+                console.log(response);
+                proceedData(name1, name2, response);
             }
         });
-
-        this.props.sendToPreviousComponent(name1, name2, results);
     };  
 };
 

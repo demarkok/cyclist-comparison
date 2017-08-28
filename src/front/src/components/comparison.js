@@ -5,7 +5,6 @@ import Paper from 'material-ui/Paper';
 import Form from './form.js';
 import Results from './results.js';
 import MenuHeader from './menu.js';
-import jsonSource from './source.js';
 
 let centerComponents = {
     display: "flex",
@@ -51,6 +50,7 @@ class Comparison extends React.Component {
     };
 
     getData = (name1, name2, items) => {
+        console.log(items);
         this.setState({
             textEntered: true,
             firstName: name1,

@@ -12,6 +12,7 @@ import System.IO
 import Network.Wai.Middleware.Static
 import Control.Monad.IO.Class
 
+import Data.String
 
 apiServer :: Connection -> ScottyM()
 apiServer connection = do
@@ -25,12 +26,11 @@ apiServer connection = do
         json list
 
 
-conn = connectPostgreSQL "host='192.168.124.244' user='postgres' dbname='main' password='password'"
-
 main :: IO ()
 main = do
     -- connect to the database
-    dbConnection <- connectPostgreSQL "host='192.168.124.244' user='postgres' dbname='main' password='password'"
+    password <- getLine
+    dbConnection <- connectPostgreSQL $ fromString ("host='pellefant.db.elephantsql.com' user='qfjtuala' dbname='qfjtuala' password='" ++ password ++ "'")
     return ()
     scotty 1234 $ do
         middleware $ staticPolicy (noDots >-> addBase "src/front") -- get static files (index.html, *.js, etc) 

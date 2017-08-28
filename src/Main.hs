@@ -24,7 +24,8 @@ apiServer connection = do
     get "/api/getAthleteList" $ do
         list <- liftIO $ getAthleteList connection
         json list
-
+    get "/api/getAllRaces" $ do
+        json getAllRaces
 
 main :: IO ()
 main = do

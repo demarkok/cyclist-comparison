@@ -9,7 +9,7 @@
 {-# LANGUAGE QuasiQuotes #-}
 
 
-module QueryProcessor where
+module QueryProcessor (getCommonCompetitionsRows, getAthleteList, getAllRaces) where
 
 import Data.Aeson
 import GHC.Generics
@@ -34,11 +34,17 @@ getAthleteList connection = AthleteList <$> (query_ connection queryText :: IO[A
     queryText = [sql| SELECT * FROM athletes |] 
     
 
-getCommonCompetitionsRows :: Connection -> String -> String -> IO[ResultTile]
+getCommonCompetitionsRows :: Connection -> String -> String -> IO [ResultTile]
 getCommonCompetitionsRows connection name1 name2 = do
     competitionIds <- (map fromOnly) <$> (query connection queryIntersect (name1, name2) :: IO[Only Int])
     athleteIds <- traverse (getAthleteId connection) [name1, name2]
     traverse (\x -> getResultTile connection x athleteIds) competitionIds 
+
+
+getAllRaces :: [Race] 
+getAllRaces = mokRaces 
+
+-----------------
 
 
 -- database connection -> athlete name -> athlete id in database
@@ -112,19 +118,26 @@ data ResultRow = ResultRow [String] deriving (Generic)
 instance ToJSON ResultRow
 instance ToJSON ResultTile
 
--- the analogue of (:) 
-(<>) :: ToString a => a -> ResultRow -> ResultRow
-infixr 5 <>
-newValue <> (ResultRow values) = ResultRow $ (toString newValue) : values
 
+
+data Race = Race {id :: Int, name :: String} deriving Generic 
+instance ToJSON Race
 
 ------------------
+
+
+mokRaces = [Race 1 "Токсовский марафон", Race 2 "Зимний кубок 2017 - первый этап", Race 3 "Мичуринский марафон"]
 
 
 mokAthleteList :: AthleteList
 mokAthleteList =
    (AthleteList . map (uncurry Athlete)) [(2, "Пётр Петров"), (1, "Василий Пупкин"), (3, "Лэнс Армстронг")]
 
+
+-- the analogue of (:) 
+(<>) :: ToString a => a -> ResultRow -> ResultRow
+infixr 5 <>
+newValue <> (ResultRow values) = ResultRow $ (toString newValue) : values
 
 mokCommonCompetitionsRows :: String -> String -> [ResultTile]
 mokCommonCompetitionsRows name1 name2 =
@@ -151,3 +164,6 @@ mokCommonCompetitionsRows name1 name2 =
                            7    <>  name1  <> "#школамтб" <>  69   <>  1982 <>  "00:11:29" <> "00:22:28" <>	"00:33:09" <> "00:44:06" <> "00:55:10" <>"01:06:11" <> "30"       <> ResultRow []]   
         }
     ]
+
+
+

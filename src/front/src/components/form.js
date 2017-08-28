@@ -12,6 +12,15 @@ let centerRow = {
     alignItems: "center",
 };
 
+let formMargin = {
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "5em"
+};
+
 const emptyError = "Please, enter sportsman name";
 
 class Form extends React.Component {
@@ -28,7 +37,7 @@ class Form extends React.Component {
 
     render() {
         return (
-            <div style={this.props.center}>
+            <div style={formMargin}>
                 <Paper zDepth={2} >
                     <div style={centerRow}>
                         <TextField floatingLabelText="First name"

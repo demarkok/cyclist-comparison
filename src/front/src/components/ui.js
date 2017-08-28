@@ -4,6 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import Form from './form.js';
 import Results from './results.js';
+import MenuHeader from './menu.js';
 import jsonSource from './source.js';
 
 let centerComponents = {
@@ -40,9 +41,7 @@ class UI extends React.Component {
     render() {
         return (
             <div style={centerComponents}> 
-                <h1 style={{ textAlign: "center",
-                	         fontFamily: "Roboto",
-                             marginBottom: "30px" }}> Comparison </h1>
+                <MenuHeader />
 
                 <Form center={centerComponents}
                       sendToPreviousComponent={this.getData.bind(this)}

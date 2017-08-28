@@ -24,7 +24,7 @@ class Results extends React.Component {
                 wins++;
             } else {
                 lose++;
-            }
+            };
 
             tiles.push(
                 <Tile data={tile}

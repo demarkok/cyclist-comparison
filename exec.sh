@@ -3,6 +3,8 @@
 cd ./src/front
 rm -rf build
 npm install
+npm install webpack
+npm install --global webpack
 webpack
 
 cd ../../

@@ -112,6 +112,7 @@ class Form extends React.Component {
         let params = "name1=" + name1 + "&" + "name2=" + name2;  
         let requestUrl = encodeURI("http://localhost:1234/api/getCommonCompetitions?" + params);
         let proceedData = this.props.sendToPreviousComponent;
+        this.props.startLoad();
         $.ajax({
             type: "GET",
             url: requestUrl,

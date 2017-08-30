@@ -43,6 +43,16 @@ class Comparison extends React.Component {
         });
     }
 
+    renderLoading = () => {
+        if (this.state.beginLoad) {
+            return (
+                <Loader active inline='centered' size="big" style={{ marginTop: "4em" }}> 
+                    Loading 
+                </Loader>
+            );
+        }
+    }
+
     renderResults = () => {
         if (this.state.textEntered) {
             return (
@@ -52,13 +62,6 @@ class Comparison extends React.Component {
                          secondName={this.state.secondName}
                          />
             );
-        } else 
-            if (this.state.beginLoad) {
-                return (
-                    <Loader active inline='centered' size="big" style={{ marginTop: "4em" }}> 
-                        Loading 
-                    </Loader>
-                );
         }
     };
 
@@ -72,6 +75,7 @@ class Comparison extends React.Component {
                       startLoad={this.startLoad.bind(this)}
                       />
 
+                {this.renderLoading()}
                 {this.renderResults()}
             </div>
         );

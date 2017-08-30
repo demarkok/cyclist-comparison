@@ -9,7 +9,6 @@ import MenuHeader from './menu.js';
 let centerComponents = {
     display: "flex",
     flexDirection: "column",
-    flexWrap: "wrap",
     justifyContent: "center",
     alignItems: "center",
 };

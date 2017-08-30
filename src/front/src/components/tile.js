@@ -41,7 +41,11 @@ class Tile extends React.Component {
       var columns = [];
 
       for (var i = 0; i < data.length; i++) {
-        columns.push(<Table.Cell> {data[i]} </Table.Cell>);
+        columns.push(
+          <Table.Cell textAlign='center'> 
+            {data[i] === "" ? "N/A" : data[i]} 
+          </Table.Cell>
+        );
       };
 
       return (

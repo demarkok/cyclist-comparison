@@ -3,11 +3,11 @@ import { Grid, Container, Segment, Card } from 'semantic-ui-react';
 import Shavkunov from './DevCards/shavkunov.js';
 import Kaysin from './DevCards/kaysin.js';
 
-let card = {
+let cardGroup = {
+    marginTop: "4em",
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    marginTop: "7em"
+    justifyСontent: "center"
 };
 
 class Portfolio extends React.Component {
@@ -17,14 +17,12 @@ class Portfolio extends React.Component {
 
     render() {
         return (
-            <Card.Group style={{ margin: "5em",
-                                 marginRight: "3em",
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyСontent: "center" }}>
-                <Shavkunov /> 
-                <Kaysin />
-            </Card.Group>
+            <Container>
+                <Card.Group style={cardGroup}>
+                    <Shavkunov /> 
+                    <Kaysin />
+                </Card.Group>
+            </Container>
         );
     };
 };

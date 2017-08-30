@@ -29,11 +29,12 @@ class Form extends React.Component {
         super(props);
 
         this.state = {
-            firstName: "",
-            secondName: "",
+            firstName: this.props.firstName,
+            secondName: this.props.secondName,
             emptyFirstNameError: null,
             emptySecondNameError: null,
         };
+
     };
 
     render() {
@@ -44,6 +45,7 @@ class Form extends React.Component {
                         <TextField floatingLabelText="First name"
                                    style={{ marginRight: "10px", 
                                             marginLeft: "10px" }}
+                                   defaultValue={this.state.firstName}
                                    errorText={this.state.emptyFirstNameError}
                                    errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleFirstNameChange.bind(this)}
@@ -51,6 +53,7 @@ class Form extends React.Component {
 
                         <TextField floatingLabelText="Second name"
                                    style={{ marginRight: "10px" }}
+                                   defaultValue={this.state.secondName}
                                    errorText={this.state.emptySecondNameError}
                                    errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleSecondNameChange.bind(this)}
@@ -119,7 +122,6 @@ class Form extends React.Component {
             dataType: "json",
             success: function(response) {
                 // TODO : error
-                console.log(response);
                 proceedData(name1, name2, response);
             }
         });

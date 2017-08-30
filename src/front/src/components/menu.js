@@ -13,9 +13,16 @@ class MenuHeader extends React.Component {
         super();
 
         this.state = {
+            savedState: null,
             itemName: comparisonName,
-            item: <Comparison />
+            item: <Comparison savePrevState={this.savePrevState.bind(this)} />
         };
+    };
+
+    savePrevState = (state) => {
+        this.setState({
+            savedState: state
+        });
     };
 
     handleItemClick = (e, { name }) => {
@@ -23,11 +30,11 @@ class MenuHeader extends React.Component {
             itemName: name
         });
 
-        // TODO: wuut
-        // TODO save state
+        // TODO: triple if
         if (name === comparisonName) {
             this.setState({
-                item: <Comparison />
+                item: <Comparison prevState={this.state.savedState}
+                                  savePrevState={this.savePrevState.bind(this)}/>
             });
         }
 
@@ -51,19 +58,19 @@ class MenuHeader extends React.Component {
                     <Container>
                         <Menu.Item name={comparisonName}
                                    active={this.state.itemName === comparisonName}
-                                   onClick={this.handleItemClick}> 
+                                   onClick={this.handleItemClick.bind(this)}> 
                                    Comparison
                         </Menu.Item>
 
                         <Menu.Item name={racesName}
                                    active={this.state.itemName === racesName} 
-                                   onClick={this.handleItemClick}> 
+                                   onClick={this.handleItemClick.bind(this)}> 
                                    Races 
                         </Menu.Item>
 
                         <Menu.Item name={aboutName}
                                    active={this.state.itemName === aboutName} 
-                                   onClick={this.handleItemClick}> 
+                                   onClick={this.handleItemClick.bind(this)}> 
                                    About
                         </Menu.Item>
 

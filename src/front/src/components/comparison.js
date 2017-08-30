@@ -15,14 +15,19 @@ let centerComponents = {
 };
 
 class Comparison extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
-        this.state = {
-            textEntered: false,
-            firstName: "",
-            secondName: ""
-        };
+        let previousState = this.props.prevState;
+        if (previousState != null && typeof previousState != 'undefined') {
+            this.state = this.props.prevState;
+        } else {
+            this.state = {
+                textEntered: false,
+                firstName: "",
+                secondName: ""
+            };
+        }
     };
 
     renderResults = () => {
@@ -41,6 +46,8 @@ class Comparison extends React.Component {
         return (
             <div style={centerComponents}> 
                 <Form center={centerComponents}
+                      firstName={this.state.firstName}
+                      secondName={this.state.secondName}
                       sendToPreviousComponent={this.getData.bind(this)}
                       />
 
@@ -50,13 +57,16 @@ class Comparison extends React.Component {
     };
 
     getData = (name1, name2, items) => {
-        console.log(items);
         this.setState({
             textEntered: true,
             firstName: name1,
             secondName: name2,
             items: items,
         });
+
+        if (typeof this.props.savePrevState != 'undefined') {
+            this.props.savePrevState(this.state);
+        }
     };
 };
 

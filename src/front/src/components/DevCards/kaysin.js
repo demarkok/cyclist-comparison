@@ -1,11 +1,18 @@
 import React from 'react';
-import { Image, Header, List, Card } from 'semantic-ui-react'
+import { Image, Header, List, Card, Icon, Button } from 'semantic-ui-react'
+
+let center = {
+    display: "relative",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+};
 
 class Kaysin extends React.Component {
 	render() {
 		return (
-			<Card>
-                <Image src='https://pp.userapi.com/c604525/v604525993/5e50/gOfUowMqpsE.jpg' size='large' />
+			<Card centered>
+                <Image src='https://pp.userapi.com/c604525/v604525993/5e50/gOfUowMqpsE.jpg' size="medium" />
                 <Card.Content>
                     <Card.Header>
                         Ilya Kaysin
@@ -26,38 +33,35 @@ class Kaysin extends React.Component {
                     </Card.Description>
 
                 </Card.Content>
-
+                
                 <Card.Content extra>
-                    <Header size='tiny' textAlign='center'> Contacts </Header>
+                    <Header size='tiny'> Contacts </Header>
+
                     <List>
                         <List.Item>
-                            <List.Icon name="vk"/>
-                            <List.Content>
-                                <a href='https://vk.com/dmrkk'> vk </a>
-                            </List.Content>
-                        </List.Item>
-
-                        <List.Item>
-                            <List.Icon name="telegram"/>
-                            <List.Content>
-                                <a href='https://telegram.me/dmrkk'> dmrkk </a>
-                            </List.Content>
-                        </List.Item>
-
-                        <List.Item>
-                            <List.Icon name="github"/>
-                            <List.Content>
-                                <a href='https://github.com/demarkok'> demarkok </a>
-                            </List.Content>
-                        </List.Item>
-
-                        <List.Item>
-                            <List.Icon name="mail"/>
-                            <List.Content>
+                            <div>
+                                <Icon name="mail"/>
                                 <a href='mailto:demarkok@gmail.com'>demarkok@gmail.com</a>
-                            </List.Content>
+                            </div>
+                        </List.Item>
+
+                        <List.Item>
+                            <List horizontal>
+                                <List.Item>
+                                    <a href='https://vk.com/dmrkk'> <Icon name="vk" size="big" /> </a>
+                                </List.Item>
+
+                                <List.Item>
+                                    <a href='https://telegram.me/dmrkk'> <Icon name="telegram" size="big" /> </a>
+                                </List.Item>
+
+                                <List.Item>
+                                    <a href='https://github.com/demarkok'> <Icon name="github" size="big" /> </a>
+                                </List.Item>
+                            </List>
                         </List.Item>
                     </List>
+                    
                 </Card.Content>
             </Card>
 		);

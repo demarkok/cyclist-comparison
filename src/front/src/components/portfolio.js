@@ -1,7 +1,14 @@
 import React from 'react';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Container, Segment, Card } from 'semantic-ui-react';
 import Shavkunov from './DevCards/shavkunov.js';
 import Kaysin from './DevCards/kaysin.js';
+
+let card = {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: "7em"
+};
 
 class Portfolio extends React.Component {
     constructor() {
@@ -10,15 +17,14 @@ class Portfolio extends React.Component {
 
     render() {
         return (
-            <Grid columns='equal' verticalAlign='middle'>
-                <Grid.Column>
-                    <Shavkunov />
-                </Grid.Column>
-
-                <Grid.Column>
-                    <Kaysin />
-                </Grid.Column>
-            </Grid>
+            <Card.Group style={{ margin: "5em",
+                                 marginRight: "3em",
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyСontent: "center" }}>
+                <Shavkunov /> 
+                <Kaysin />
+            </Card.Group>
         );
     };
 };

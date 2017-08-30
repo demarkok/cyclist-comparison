@@ -1,5 +1,6 @@
 import React from 'react';
 import Comparison from './comparison.js'
+import Portfolio from './portfolio.js';
 import { Menu, Container } from 'semantic-ui-react'
 import { Flag, Segment } from 'semantic-ui-react'
 
@@ -23,6 +24,7 @@ class MenuHeader extends React.Component {
         });
 
         // TODO: wuut
+        // TODO save state
         if (name === comparisonName) {
             this.setState({
                 item: <Comparison />
@@ -37,7 +39,7 @@ class MenuHeader extends React.Component {
 
         if (name === aboutName) {
             this.setState({
-                item: null
+                item: <Portfolio />
             });
         }
     };

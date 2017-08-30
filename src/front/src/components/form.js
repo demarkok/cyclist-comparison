@@ -118,6 +118,7 @@ class Form extends React.Component {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(response) {
+                // TODO : error
                 console.log(response);
                 proceedData(name1, name2, response);
             }

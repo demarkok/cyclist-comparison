@@ -3,7 +3,6 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import $ from "jquery";
-import { deepPurple500 } from 'material-ui/styles/colors';
 
 let centerRow = {
     display: "flex",
@@ -47,7 +46,6 @@ class Form extends React.Component {
                                             marginLeft: "10px" }}
                                    defaultValue={this.state.firstName}
                                    errorText={this.state.emptyFirstNameError}
-                                   errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleFirstNameChange.bind(this)}
                                    />
 
@@ -55,7 +53,6 @@ class Form extends React.Component {
                                    style={{ marginRight: "10px" }}
                                    defaultValue={this.state.secondName}
                                    errorText={this.state.emptySecondNameError}
-                                   errorStyle={{ color: deepPurple500 }}
                                    onChange={this.handleSecondNameChange.bind(this)}
                                    />
                     </div>

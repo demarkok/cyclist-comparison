@@ -11,7 +11,7 @@
 
 module QueryProcessor (getCommonCompetitionsRows, getAthleteList, getAllRaces) where
 
-import Data.Aeson
+import Data.Aeson (FromJSON, ToJSON)
 import GHC.Generics
 import Data.Time
 import Database.PostgreSQL.Simple
@@ -19,151 +19,149 @@ import Database.PostgreSQL.Simple.ToRow
 import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.SqlQQ
+import Database.PostgreSQL.Simple.FromField
 
 import Data.String
 import Data.List
 
 import ToString
 
+import Text.Parsec.String
+import Data.Fixed
 
------------------
--- TODO make typing stronger: wrap Strings.
+
+----------------- Interface
+
 
 getAthleteList :: Connection -> IO AthleteList 
-getAthleteList connection = AthleteList <$> (query_ connection queryText :: IO[Athlete]) where
-    queryText = [sql| SELECT * FROM athletes |] 
+getAthleteList connection = AthleteList <$> (query_ connection queryText :: IO [Athlete]) where
+    queryText = [sql| SELECT name, yob FROM athletes |] 
     
 
 getCommonCompetitionsRows :: Connection -> String -> String -> IO [ResultTile]
 getCommonCompetitionsRows connection name1 name2 = do
-    competitionIds <- (map fromOnly) <$> (query connection queryIntersect (name1, name2) :: IO[Only Int])
-    athleteIds <- traverse (getAthleteId connection) [name1, name2]
-    traverse (\x -> getResultTile connection x athleteIds) competitionIds 
+    raceIds <- mapFromOnly <$> (query connection queryIntersect (name1, name2) :: IO [Only Int])
+    athleteIds <- mapFromOnly . concat <$> traverse (query connection queryGetAthleteId . Only :: String -> IO [Only Int]) [name1, name2]
+    --  getTile :: Int -> IO ResultTile
+    let getTile raceId = do
+            [race] <- (query connection queryGetRace (Only raceId) :: IO [Race])
+            raceRows <- traverse getRow athleteIds 
+            return $ createTile race raceRows where
+                getRow :: Int -> IO Result
+                getRow athleteId = do
+                    [athlete] <- (query connection queryGetAthlete (Only athleteId) :: IO [Athlete])
+                    [(resultId, place, timeInSecs)] <- (query connection queryGetResult (raceId, athleteId) :: IO [(Int, Int, Int)])
+                    laps <- LapsResult <$> (map Time) <$> mapFromOnly <$> (query connection queryGetLapsResult (Only resultId) :: IO [Only Int])
+                    return $ Result athlete place (Time timeInSecs) laps
+    traverse getTile raceIds 
+         
+
+getAllRaces :: Connection -> IO [Race] 
+getAllRaces connection = (query_ connection queryText :: IO [Race]) where
+    queryText = [sql| SELECT date, name from races |]
 
 
-getAllRaces :: [Race] 
-getAllRaces = mokRaces 
-
------------------
+------------------ Queries
 
 
--- database connection -> athlete name -> athlete id in database
-getAthleteId :: Connection -> String -> IO Int
-getAthleteId connection name = do
-    [Only athleteId] <- query connection queryGetAthleteId (Only name) :: IO [Only Int]
-    return athleteId
+mapFromOnly :: [Only a] -> [a]
+mapFromOnly = map fromOnly
 
--- database connection -> competition id -> list of athletes -> a tile containing rows corresponding to 
--- given athletes in given competition
-getResultTile :: Connection -> Int -> [Int] -> IO(ResultTile)
-getResultTile connection competitionId athleteIds = do
-    [Only date] <- (query connection queryGetDate (Only competitionId) :: IO[Only Day])
-    [[name]] <- (query connection queryGetCompetitionName (Only competitionId) :: IO[[String]])
-    
-    columnNamesWrapped <- (query connection queryGetColumnNames (Only name) :: IO[[String]])
-    let columnNames = concat columnNamesWrapped
-    resultRows <- traverse (getResultRow columnNames connection name) athleteIds
-    return $ ResultTile date name columnNames resultRows
-
--- list of column names in result table -> database connection -> name of table in database corresponding competition ->
--- -> athlete id -> a row from the result table corresponding given athlete containing given columns
-getResultRow :: [String] -> Connection -> String -> Int -> IO ResultRow
-getResultRow columnNames connection competitionName athleteId = do
-    [rowContentWrapped] <- (query_ connection (queryGetRow columnNames competitionName athleteId) :: IO[[Maybe String]])
-    let rowContent = unwrap <$> rowContentWrapped where
-        unwrap (Just s) = s
-        unwrap Nothing = ""
-    return $ ResultRow rowContent 
-
-
--- insert cast to Text in the query, due to number and types of columns are undefined
-queryGetRow columnNames competitionName athleteId = fromString $ "select " ++ castColumnNames ++ " from " ++ competitionName ++ " WHERE athlete_id = " ++ (show athleteId) where
-   castColumnNames = intercalate "," $ (\name -> name ++ "::Text") <$> columnNames 
-
-queryGetColumnNames = [sql| SELECT column_name FROM information_schema.columns WHERE table_name = ? |] 
-queryGetCompetitionName = [sql| select name from competitions WHERE id = ? |]
-queryGetDate = [sql| select date from competitions WHERE id = ? |]
-queryIntersect = [sql| select competition_id from participations WHERE
+queryIntersect = [sql| select race_id from results WHERE
 	                       athlete_id IN  
-	                           (select id from athletes where name = ?)
+	                           (select id from athletes WHERE name = ?)
                        intersect
-                       select competition_id from participations where
+                       select race_id from results WHERE
                 	       athlete_id IN  
-                            	(select id from athletes where name = ?) |]
+                            	(select id from athletes WHERE name = ?) |]
 
 queryGetAthleteId = [sql| select id from athletes WHERE name = ? |]
 
+queryGetRace = [sql| select date, name from races WHERE id = ? |] 
 
-------------------
+queryGetAthlete = [sql| select name, yob from athletes WHERE id = ? |]
+
+queryGetResult = [sql| select result_id, place, time_in_secs from results WHERE race_id = ? and athlete_id = ? |]
+
+queryGetLapsResult = [sql| select time_in_secs from lap_results WHERE result_id = ? order by lap_index |]
+
+
+------------------  Data
 
 
 data AthleteList = AthleteList [Athlete] deriving Generic 
-data Athlete = Athlete {id :: Int, name :: String} deriving Generic
+data Athlete = Athlete {name :: String, yob :: Int} deriving (Show, Eq, Generic, Ord)
 
 instance ToJSON Athlete
 instance ToJSON AthleteList 
-
 instance FromRow Athlete 
-instance ToRow Athlete
 
-
--- type describing a tile of results for a common competition for two or more athletes
--- date - competition date
--- title - competition name
+-- type describing a tile of results for a common races for two or more athletes
+-- date - race date
+-- title - race name
 -- columnNames - names of columns in the result table e.g. place, time, team, city, etc
 -- members - an array of rows in result table. One row for every athlete. 
-data ResultTile = ResultTile {date :: Day, title :: String, columnNames :: [String], members :: [ResultRow]} deriving (Generic)
-data ResultRow = ResultRow [String] deriving (Generic)
+data ResultTile = ResultTile {date :: Day, 
+                              title :: String,
+                              columnNames :: [String], 
+                              members :: [[String]]} deriving (Show, Generic)
 
-instance ToJSON ResultRow
 instance ToJSON ResultTile
 
 
+data Race = Race { date :: Day, title :: String } deriving (Show, Generic)
+instance FromRow Race 
+instance ToJSON Race -- TODO: wrap toJSON interface: add getQuery :: a -> Query
 
-data Race = Race {id :: Int, name :: String} deriving Generic 
-instance ToJSON Race
+
+data Result = Result { athlete :: Athlete, place :: Int, time :: Time, laps :: LapsResult } deriving (Show, Generic, Eq)
+data LapsResult = LapsResult { getList :: [Time] } deriving (Show, Generic, Eq, Ord)
+
+
+instance Ord Result where
+    compare (Result athlete1 place1 time1 laps1) (Result athlete2 place2 time2 laps2) =
+        compare (place1, time1, laps1, athlete1) (place2, time2, laps2, athlete2) 
+
+
+createTile :: Race -> [Result] -> ResultTile
+createTile race results = 
+    ResultTile raceDate raceTitle columnNames members where
+        raceDate = date (race :: Race)
+        raceTitle = title (race :: Race)
+        columnNames = "Place" : "Name" : "Year" : lapNames ++ ["Time"]
+        members = do
+            result <- sort results
+            let (Athlete name yob) = athlete result
+            let lapValues = getList $ laps result
+            return $ place result <> name <> yob <> lapValues <> [toString $ time result]
+        lapNames = zipWith (++) (replicate len "Lap ") (map show [1..len])
+        len = length $ getList $ laps $ head results
+        
+data Time = Time {inSeconds :: Int} deriving (Eq, Ord)
+
+instance Show Time where
+    show (Time time) = hh ++ ":" ++ mm ++ ":" ++ ss where
+        h = time `div` 3600
+        m = (time `mod` 3600) `div` 60
+        s = time `mod` 60
+        prettyShow x = if x < 10 then ('0' : show x) else show x
+        hh = prettyShow h 
+        mm = prettyShow m
+        ss = prettyShow s
 
 ------------------
 
+-- the analogue of (:) 
+(<>) :: ToString a => a -> [String] -> [String]
+infixr 5 <>
+x <> xs = toString x : xs
 
-mokRaces = [Race 1 "Токсовский марафон", Race 2 "Зимний кубок 2017 - первый этап", Race 3 "Мичуринский марафон"]
+
+
+mokRaces = [Race (fromGregorian 1999 10 10) "Токсовский марафон", Race (fromGregorian 2002 10 10) "Зимний кубок 2017 - первый этап", Race (fromGregorian 2014 11 11) "Мичуринский марафон"]
 
 
 mokAthleteList :: AthleteList
 mokAthleteList =
-   (AthleteList . map (uncurry Athlete)) [(2, "Пётр Петров"), (1, "Василий Пупкин"), (3, "Лэнс Армстронг")]
-
-
--- the analogue of (:) 
-(<>) :: ToString a => a -> ResultRow -> ResultRow
-infixr 5 <>
-newValue <> (ResultRow values) = ResultRow $ (toString newValue) : values
-
-mokCommonCompetitionsRows :: String -> String -> [ResultTile]
-mokCommonCompetitionsRows name1 name2 =
-    [ 
-        ResultTile {
-            date = fromGregorian 2017 08 19,
-            title = "Токсовский марафон", 
-            columnNames = "place" : "bib" : "name" :  "team"                 :  "lap1time": "lap1place" :  "lap2time": "lap2place" :  "time"    :  "lag"    :  [],
-            members = [    11     <> 15   <> name1 <> "FAST-BIKE Велосервис" <> "1:00:03" <> 6          <> "2:00:45" <> 11         <> "2:00:45" <> "+09:54" <> ResultRow [],
-                           22     <> 14   <> name2 <> "Rikkir-9RusMTB"       <> "1:01:26" <> 14         <> "2:05:49" <> 22         <> "2:05:49" <> "+14:58" <> ResultRow []]
-        },
-        ResultTile {
-            date = fromGregorian 2016 04 12,
-            title = "Первый этап Зимнего кубка xcnews.ru 2016",
-            columnNames = "place" : "name" :  "team"  :  "bib" :  "YOB" :  "lap1time" :  "lap2time" :  "lap3time" :  "lap4time" :  "lap5time" :  "time"    :  "category" : [],
-            members = [    4     <> name2  <> ""      <>  18   <>  1981 <> "0:12:04"  <> "0:12:18"  <> "0:12:22"  <> "0:12:40"  <> "0:12:43"  <> "1:02:12" <> "30"       <> ResultRow [],
-                           17    <> name1  <> "лично" <>  69   <>  1982 <> "0:14:21"  <> "0:13:40"  <> "0:13:47"  <> "0:13:32"  <> "0:13:47"  <> "1:09:07" <> "30"       <> ResultRow []]   
-        },
-        ResultTile {
-            date = fromGregorian 2017 03 12,
-            title = "Седьмой этап Зимнего кубка xcnews.ru 2016",
-            columnNames = "place" : "name" :  "team"  :      "bib" :  "YOB" :  "lap1time" :  "lap2time" :  "lap3time" :  "lap4time" :  "lap5time" : "lap6time" : [],
-            members = [    6     <> name2  <> ""      <>      99   <>  1981 <> "00:11:05" <>  "00:21:45" <> "00:32:30" <> "00:43:14" <> "00:53:57" <>"01:05:32" <> "30"       <> ResultRow [],
-                           7    <>  name1  <> "#школамтб" <>  69   <>  1982 <>  "00:11:29" <> "00:22:28" <>	"00:33:09" <> "00:44:06" <> "00:55:10" <>"01:06:11" <> "30"       <> ResultRow []]   
-        }
-    ]
-
-
+   (AthleteList . map (uncurry Athlete)) [("Пётр Петров", 1991), ("Василий Пупкин", 1980), ("Лэнс Армстронг", 2002)]
 

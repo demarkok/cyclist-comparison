@@ -25,14 +25,16 @@ apiServer connection = do
         list <- liftIO $ getAthleteList connection
         json list
     get "/api/getAllRaces" $ do
-        json getAllRaces
+        list <- liftIO $ getAllRaces connection
+        json list
 
 main :: IO ()
 main = do
     -- connect to the database
     password <- getLine
     dbConnection <- connectPostgreSQL $ fromString ("host='pellefant.db.elephantsql.com' user='qfjtuala' dbname='qfjtuala' password='" ++ password ++ "'")
-    return ()
+    {-dbConnection <- connectPostgreSQL $ fromString ("host='192.168.124.244' user='postgres' dbname='another' password='password'")-}
     scotty 1234 $ do
         middleware $ staticPolicy (noDots >-> addBase "src/front") -- get static files (index.html, *.js, etc) 
         apiServer dbConnection
+    return ()

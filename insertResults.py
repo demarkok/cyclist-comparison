@@ -103,6 +103,10 @@ def getAthleteId(conn, name):
     (id,) = cur.fetchone()
     return id
 
+def getSec(timeStr):
+    h, m, s = timeStr.split(':')
+    return int(h) * 3600 + int(m) * 60 + int(s)
+
 def main(argv):
     filename = argv[0]
     password = argv[1]
@@ -121,27 +125,29 @@ def main(argv):
 
     race = Race(info[0], info[1], info[2])
 
-    conn = psycopg2.connect(dbname = "another", user = "postgres", password = password, host = "192.168.124.244", port = "5432")
+    conn = psycopg2.connect(dbname = "qfjtuala", user = "qfjtuala", password = password, host = "pellefant.db.elephantsql.com", port = "5432")
     # conn = psycopg2.connect(connectionConfig)
     
     athletes = list(map(lambda di : Athlete(di["name"], di["yob"]), resDicts))
     existedAthletes = getAthletes(conn)
     athletesToAdd = [athlete for athlete in athletes if athlete not in existedAthletes]
 
+    insertRace(conn, race)
+
     for athlete in athletesToAdd:
         insertAthlete(conn, athlete)
-        insertRace(conn, race)
 
     for row in resDicts:
         cur = conn.cursor()
-        cur.execute("insert into results (race_id, athlete_id, place, time) values (%s, %s, %s, %s) returning result_id", (getRaceId(conn, race), getAthleteId(conn, row["name"]), row["place"], row["time"]))
+        cur.execute("insert into results (race_id, athlete_id, place, time_in_secs) values (%s, %s, %s, %s) returning result_id", 
+                (getRaceId(conn, race), getAthleteId(conn, row["name"]), row["place"], getSec(row["time"])))
         (result_id,) = cur.fetchone()
         for i in range(race.number_of_laps):
-            column = "timeLap" + str(i + 1)
-            if row[column] == '':
+            columnName = "timeLap" + str(i + 1)
+            if row[columnName] == '':
                 break
-            cur.execute("insert into lap_results (result_id, lap_index, time) values (%s, %s, %s)", (result_id, i + 1, row[column]))
-
+            cur.execute("insert into lap_results (result_id, lap_index, time_in_secs) values (%s, %s, %s)", (result_id, i + 1, getSec(row[columnName])))
+        print(row)
     conn.commit()
 
 

@@ -58,7 +58,7 @@ getCommonCompetitionsRows connection name1 name2 = do
 
 getAllRaces :: Connection -> IO [Race] 
 getAllRaces connection = (query_ connection queryText :: IO [Race]) where
-    queryText = [sql| SELECT date, name from races |]
+    queryText = [sql| SELECT date, name, number_of_laps from races |]
 
 
 ------------------ Queries
@@ -77,7 +77,7 @@ queryIntersect = [sql| select race_id from results WHERE
 
 queryGetAthleteId = [sql| select id from athletes WHERE name = ? |]
 
-queryGetRace = [sql| select date, name from races WHERE id = ? |] 
+queryGetRace = [sql| select date, name, number_of_laps from races WHERE id = ? |] 
 
 queryGetAthlete = [sql| select name, yob from athletes WHERE id = ? |]
 
@@ -109,7 +109,7 @@ data ResultTile = ResultTile {date :: Day,
 instance ToJSON ResultTile
 
 
-data Race = Race { date :: Day, title :: String } deriving (Show, Generic)
+data Race = Race { date :: Day, title :: String, numberOfLaps :: Int } deriving (Show, Generic)
 instance FromRow Race 
 instance ToJSON Race -- TODO: wrap toJSON interface: add getQuery :: a -> Query
 
@@ -133,9 +133,10 @@ createTile race results =
             result <- sort results
             let (Athlete name yob) = athlete result
             let lapValues = getList $ laps result
-            return $ place result <> name <> yob <> lapValues <> [toString $ time result]
+            let lapValuesFormatted = (toString <$> lapValues) ++ (replicate (len - length lapValues) "")
+            return $ (place result <> name <> yob <>  lapValuesFormatted) ++ [toString $ time result]
         lapNames = zipWith (++) (replicate len "Lap ") (map show [1..len])
-        len = length $ getList $ laps $ head results
+        len = numberOfLaps race 
         
 data Time = Time {inSeconds :: Int} deriving (Eq, Ord)
 

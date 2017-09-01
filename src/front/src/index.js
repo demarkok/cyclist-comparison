@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import MenuHeader from './components/menu.js';
+import BodyBackgroundColor from 'react-body-backgroundcolor';
 
 injectTapEventPlugin();
 const App = () => (
-    <MuiThemeProvider>
-        <MenuHeader />
-    </MuiThemeProvider>
+	<BodyBackgroundColor backgroundColor='#F0F8FF'>
+	    <MuiThemeProvider>
+	        <MenuHeader />
+	    </MuiThemeProvider>
+    </BodyBackgroundColor>
 );
 
 ReactDOM.render(

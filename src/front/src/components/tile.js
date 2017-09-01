@@ -13,22 +13,30 @@ class Tile extends React.Component {
     render() {
         return (
           	<Paper zDepth={2}
-          	  	 	 style={{ marginTop: "20px", backgroundColor: this.props.tileColor }}>
+          	  	 	 style={{ marginTop: "20px", 
+                            backgroundColor: this.props.tileColor, 
+                            marginLeft: "1em", 
+                            marginRight: "1em", }}>
 
               <div style={{ marginTop: "50px" }}>
                 <h3 style={{ textAlign: "center" }}> {this.props.data.title} </h3>
 
-    	        	<Table celled padded>
+                <div style={{ display: "flex",
+                                                flexDirection: "column",
+                                                paddingLeft: "1em", 
+                                                paddingRight: "1em",}}>
+      	        	<Table celled padded >
 
-    	        		<Table.Header>
-    			          
-    			         {this.renderColumnNames()}
-    			          
-    			        </Table.Header>
+      	        		<Table.Header>
+      			          
+      			         {this.renderColumnNames()}
+      			          
+      			        </Table.Header>
 
-                  {this.renderMembers()}
+                    {this.renderMembers()}
 
-    			      </Table>
+      			      </Table>
+                </div>
 
                 <h4 style={{ textAlign: "center" }}> {this.props.data.date} </h4>
               </div>
@@ -43,7 +51,7 @@ class Tile extends React.Component {
       for (var i = 0; i < data.length; i++) {
         columns.push(
           <Table.Cell textAlign='center'> 
-            {data[i] === "" ? "N/A" : data[i]} 
+            {data[i] === "" ? "--" : data[i]} 
           </Table.Cell>
         );
       };
@@ -79,11 +87,11 @@ class Tile extends React.Component {
 	   				let column = this.props.data.columnNames[i];
 
             if (i == 0) {
-              columns.push(<Table.HeaderCell singleLine> {column} </Table.HeaderCell>);
+              columns.push(<Table.HeaderCell singleLine textAlign='center'> {column} </Table.HeaderCell>);
               continue;
             }
 
-	   				columns.push(<Table.HeaderCell> {column} </Table.HeaderCell>);
+	   				columns.push(<Table.HeaderCell textAlign='center'> {column} </Table.HeaderCell>);
 			  };
 
     	  return (

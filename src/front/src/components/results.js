@@ -1,10 +1,19 @@
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import Tile from './tile.js';
-import { Statistic } from 'semantic-ui-react';
+import { Statistic, Container } from 'semantic-ui-react';
 
 const winColor = "#F8FFEE";
 const loseColor = "#FFF6F5";
+
+let centerStats = {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "2em",
+    marginBottom: "2em"
+};
 
 class Results extends React.Component {
     constructor(props) {
@@ -28,7 +37,10 @@ class Results extends React.Component {
 
             tiles.push(
                 <Tile data={tile}
-                      style={{ marginTop: "20px" }}
+                      style={{ marginTop: "20px",
+                               marginLeft: "2em",
+                               marginRight: "2em" 
+                      }}
                       center={this.props.center}
                       tileColor={color}/> 
             );
@@ -64,10 +76,17 @@ class Results extends React.Component {
         ];
 
         return (
-            <div style={this.props.center}>
-                <h2 style={{ marginTop: "20px", testAlign: "center" }}> {this.props.firstName} </h2>
-                
-                <Statistic.Group items={items} color={statsColor} />
+            <div>
+                <div>
+                    <h2 style={{ marginTop: "20px", textAlign: "center" }}> {this.props.firstName} </h2>
+                </div>
+
+                <Container style={centerStats}>
+                    <div>
+                        <Statistic label="Wins" value={wins} color={statsColor} style={{ marginRight: "2em" }}/>
+                        <Statistic label="Lose" value={lose} color={statsColor}/>
+                    </div>
+                </Container>
             </div>
         );
     };
@@ -77,7 +96,7 @@ class Results extends React.Component {
             let column = tile.columnNames[i];
 
             // assume that column names contains this record
-            if (column === "name") {
+            if (column === "name" || column === "Name") {
                 return i;
             }
         }
@@ -87,7 +106,6 @@ class Results extends React.Component {
 
     identifyTile = (tile) => {
         let nameIndex = this.getNameIndex(tile);
-
         // assume, that there is only two persons
         // first line is the winner of two persons. firstName -- name of our team
         if (tile.members[0][nameIndex] === this.props.firstName) {

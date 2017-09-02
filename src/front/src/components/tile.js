@@ -19,7 +19,7 @@ class Tile extends React.Component {
                             marginRight: "1em", }}>
 
               <div style={{ marginTop: "50px" }}>
-                <h3 style={{ textAlign: "center" }}> {this.props.data.title} </h3>
+                <h3 style={{ textAlign: "center", marginTop: "1em", paddingTop: "1em" }}> {this.props.data.title} </h3>
 
                 <div style={{ display: "flex",
                                                 flexDirection: "column",
@@ -38,7 +38,7 @@ class Tile extends React.Component {
       			      </Table>
                 </div>
 
-                <h4 style={{ textAlign: "center" }}> {this.props.data.date} </h4>
+                <h4 style={{ textAlign: "center", marginBottom: "1em", paddingBottom: "1em" }}> {this.props.data.date} </h4>
               </div>
 
   		      </Paper>

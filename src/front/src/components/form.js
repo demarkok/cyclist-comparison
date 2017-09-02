@@ -40,12 +40,6 @@ class Form extends React.Component {
             emptyFirstNameError: null,
             emptySecondNameError: null,
         };
-
-        this.state = {
-            firstName: "Степанов Антон",
-            secondName: "Кайсин Илья",
-        };
-
     };
 
     render() {

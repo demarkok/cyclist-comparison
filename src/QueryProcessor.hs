@@ -78,13 +78,15 @@ getAllRaces connection = (query_ connection queryText :: IO [Race]) where
 mapFromOnly :: [Only a] -> [a]
 mapFromOnly = map fromOnly
 
-queryIntersect = [sql| select race_id from results WHERE
-	                       athlete_id IN  
-	                           (select id from athletes WHERE name = ?)
-                       intersect
-                       select race_id from results WHERE
-                	       athlete_id IN  
-                            	(select id from athletes WHERE name = ?) |]
+queryIntersect = [sql| select race_id from (
+                           select race_id from results WHERE
+                               athlete_id IN (select id from athletes WHERE name = ?) 
+                           intersect
+                           select race_id from results WHERE
+                               athlete_id IN (select id from athletes WHERE name = ?)) as foo
+                           inner join races on (races.id = race_id)
+                           order by date desc
+                 |]
 
 queryGetAthleteId = [sql| select id from athletes WHERE name = ? |]
 

@@ -9,7 +9,7 @@
 {-# LANGUAGE QuasiQuotes #-}
 
 
-module QueryProcessor (getCommonCompetitionsRows, getAthleteList, getAllRaces) where
+module QueryProcessor (getCommonCompetitionsRows, getAthleteList, getAllRaces, completeAthleteName) where
 
 import Data.Aeson (FromJSON, ToJSON)
 import GHC.Generics
@@ -23,15 +23,26 @@ import Database.PostgreSQL.Simple.FromField
 
 import Data.String
 import Data.List
+import Data.List.Split
 
 import ToString
 
-import Text.Parsec.String
 import Data.Fixed
 
 
 ----------------- Interface
 
+
+completeAthleteName :: Connection -> String -> IO AthleteList
+completeAthleteName connection name = AthleteList <$> (query connection queryText (Only regex) :: IO [Athlete]) where
+    queryText = [sql| SELECT name, yob FROM athletes WHERE name ~* ? |]
+    splitted = splitOn " " name
+    regex 
+        | []      <- splitted = ""
+        | [s]     <- splitted = s
+        | (f:s:_) <- splitted = f ++ ".*" ++ s ++ "|" ++ 
+                                s ++ ".*" ++ f 
+     
 
 getAthleteList :: Connection -> IO AthleteList 
 getAthleteList connection = AthleteList <$> (query_ connection queryText :: IO [Athlete]) where

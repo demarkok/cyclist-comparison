@@ -27,6 +27,10 @@ apiServer connection = do
     get "/api/getAllRaces" $ do
         list <- liftIO $ getAllRaces connection
         json list
+    get "/api/completeAthleteName" $ do
+        name <- param "name"
+        list <- liftIO $ completeAthleteName connection name
+        json list
 
 main :: IO ()
 main = do

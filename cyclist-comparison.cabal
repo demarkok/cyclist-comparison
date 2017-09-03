@@ -26,5 +26,7 @@ executable cyclist-comparison
                        network,
                        wai-middleware-static,
                        bytestring,
-                       parsec
+                       mtl,
+                       split
+                       --parsec
                        --hledger-lib

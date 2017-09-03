@@ -39,14 +39,14 @@ import psycopg2, csv, sys
 class Athlete:
     def __init__(self, name, yob):
         self.name = name
-        if yob == None:
-           self.yob = None
+        if yob is "":
+            self.yob = 0
         else:
             self.yob = int(yob)
     
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.name == other.name and self.yob == other.yob
+            return self.name == other.name and (self.yob == 0 or other.yob == 0 or  self.yob == other.yob)
         else:
             return False
 
@@ -103,6 +103,10 @@ def getAthleteId(conn, name):
     (id,) = cur.fetchone()
     return id
 
+def updateAthlete(conn, athlete):
+    cur = conn.cursor()
+    cur.execute("update athletes set yob = %s where name = %s", (athlete.yob, athlete.name))
+
 def getSec(timeStr):
     h, m, s = timeStr.split(':')
     return int(h) * 3600 + int(m) * 60 + int(s)
@@ -131,6 +135,12 @@ def main(argv):
     athletes = list(map(lambda di : Athlete(di["name"], di["yob"]), resDicts))
     existedAthletes = getAthletes(conn)
     athletesToAdd = [athlete for athlete in athletes if athlete not in existedAthletes]
+    
+    athletesToUpdate = [athlete for athlete in athletes if athlete in existedAthletes and athlete.yob == 0]
+    for athlete in athletesToUpdate:
+        updateAthlete(athlete)
+    
+    
 
     insertRace(conn, race)
 

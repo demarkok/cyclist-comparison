@@ -82,6 +82,9 @@ class MenuHeader extends React.Component {
                 </Menu>
 
                 {this.state.item}
+
+                <Menu fixed='bottom' inverted size='large' style={{ marginTop: "5em" }}>
+                </Menu>
             </div>
         );
     };

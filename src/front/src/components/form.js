@@ -21,6 +21,13 @@ let formMargin = {
     marginTop: "5em"
 };
 
+let centerButton = {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+};
+
 const emptyError = "Please, enter sportsman name";
 
 class Form extends React.Component {
@@ -33,7 +40,6 @@ class Form extends React.Component {
             emptyFirstNameError: null,
             emptySecondNameError: null,
         };
-
     };
 
     render() {
@@ -44,22 +50,25 @@ class Form extends React.Component {
                         <TextField floatingLabelText="First name"
                                    style={{ marginRight: "10px", 
                                             marginLeft: "10px" }}
-                                   defaultValue={this.state.firstName}
+                                   defaultValue={this.props.firstName}
                                    errorText={this.state.emptyFirstNameError}
                                    onChange={this.handleFirstNameChange.bind(this)}
                                    />
 
                         <TextField floatingLabelText="Second name"
                                    style={{ marginRight: "10px" }}
-                                   defaultValue={this.state.secondName}
+                                   defaultValue={this.props.secondName}
                                    errorText={this.state.emptySecondNameError}
                                    onChange={this.handleSecondNameChange.bind(this)}
                                    />
                     </div>
 
-                    <div style={this.props.center}>
-                        <RaisedButton label="Compare"
-                                      style={{ marginBottom: "10px",
+                    <div style={centerButton}>
+                        <RaisedButton 
+                                      fullWidth={false}
+                                      label="Compare"
+                                      style={{ 
+                                               marginBottom: "10px",
                                                marginTop: "15px" }}
                                       onClick={this.validation.bind(this)}
                                       />

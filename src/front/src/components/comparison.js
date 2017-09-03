@@ -8,8 +8,7 @@ import Results from './results.js';
 import MenuHeader from './menu.js';
 
 let centerComponents = {
-    display: "flex",
-    flexDirection: "column",
+    display: "relative",
     justifyContent: "center",
     alignItems: "center",
 };
